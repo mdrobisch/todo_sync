@@ -4,7 +4,9 @@
     "sync_interval" : 10,
     "syncs" : [
         {
-            "calendar_url" : "",
+            "calendar_url_active" : "",
+            "calendar_url_active_and_backlog" : "",
+            "calendar_url_active_and_backlog_and_closed" : "",
             "repo_url": "",
             "project_url" : ""
         }

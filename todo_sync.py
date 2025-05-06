@@ -12,11 +12,13 @@ with caldav.DAVClient(url=CALENDAR_URL, username=sync_config.get("global_usernam
     my_principal = client.principal()
     calendars = my_principal.calendars()
     sel_cal = my_principal.calendar('Dashboard (active)')
+    todos = sel_cal.todos(include_completed=True)
+    print(todos[0].vobject_instance.vtodo.completed)
     
     sel_cal.add_todo(
-        summary="Test2 sum",
+        summary="Test3 sum",
         description="https://python.org\n\nAnd some more",
-        status="",
+        status="NEEDS-ACTION",
         priority=5,
         percent_complete=0,
         completed=None,
@@ -26,3 +28,5 @@ with caldav.DAVClient(url=CALENDAR_URL, username=sync_config.get("global_usernam
     todos = sel_cal.todos()
     pass
 print("Done")
+
+'BEGIN:VCALENDAR\nVERSION:2.0\nPRODID:+//IDN bitfire.at//ical4android (org.dmfs.tasks)\nBEGIN:VTODO\nCOMPLETED:20250506T090342Z\nDESCRIPTION:https://www.w3schools.com/python/ref_dictionary_get.asp\\n\\nAnd \n some mor\nDTSTAMP:20250506T090342Z\nLAST-MODIFIED:20250506T090342Z\nPERCENT-COMPLETE:100\nPRIORITY:5\nSEQUENCE:1\nSTATUS:COMPLETED\nSUMMARY:Test sum\nUID:159f5baf-2a56-11f0-9330-3c9c0f83f549\nURL:https://google.com\nEND:VTODO\nEND:VCALENDAR\n'
