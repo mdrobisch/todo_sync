@@ -8,7 +8,7 @@ CALENDAR_URL = "https://cloud.fabba.space/remote.php/dav/calendars/mdrobisch@aup
 sync_config : dict
 sync_config = json.load(open("sync_config.json", "r"))
 
-with caldav.DAVClient(url=CALENDAR_URL, username=sync_config.get("global_username"), password=sync_config.get("global_password")) as client:
+with caldav.DAVClient(url=CALENDAR_URL, username=sync_config.get("global_caldav_username"), password=sync_config.get("global_caldav_password")) as client:
     my_principal = client.principal()
     calendars = my_principal.calendars()
     sel_cal = my_principal.calendar('Dashboard (active)')

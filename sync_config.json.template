@@ -1,6 +1,7 @@
 {
-    "global_username" : "",
-    "global_password" : "",
+    "global_caldav_username" : "",
+    "global_caldav_password" : "",
+    "global_github_token" : "",    
     "sync_interval" : 10,
     "syncs" : [
         {
