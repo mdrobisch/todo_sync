@@ -1,0 +1,12 @@
+{
+    "global_username" : "",
+    "global_password" : "",
+    "sync_interval" : 10,
+    "syncs" : [
+        {
+            "calendar_url" : "",
+            "repo_url": "",
+            "project_url" : ""
+        }
+    ]
+}
