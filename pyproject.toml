@@ -1,0 +1,12 @@
+[project]
+name = "todo_sync"
+version = "1.0.0"
+dependencies = [
+  "caldav>=1.4.0",
+  "dotenv>=0.9.9",
+]
+
+[dependency-groups]
+dev = [
+    "ruff>=0.11.8",
+]
