@@ -6,6 +6,7 @@ Meant to run as a service on a server as a cron-job.
 Status:
   - at the moment only sync. a single repo with caldav 
   - will sync. in both directions on updates
+  - will detect closing / mark as done and updates accordingly
   - the config json for multiple repository syncs is not used at the moment
   - custom properties of project are not fully implemented yet (fetching is there, logic behind not)
 
