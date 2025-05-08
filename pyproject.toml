@@ -8,5 +8,13 @@ dependencies = [
 
 [dependency-groups]
 dev = [
+    "ariadne-codegen>=0.14.0",
     "ruff>=0.11.8",
 ]
+
+
+[tool.ariadne-codegen]
+schema_path = "github_schema.graphql"
+include_comments = "none"
+target_package_name = "github_client"
+enable_custom_operations = true

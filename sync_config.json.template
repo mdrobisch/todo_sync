@@ -7,9 +7,10 @@
         {
             "calendar_url_active" : "",
             "calendar_url_active_and_backlog" : "",
+            "calendar_url_active_and_closed" : "",            
             "calendar_url_active_and_backlog_and_closed" : "",
-            "repo_url": "",
-            "project_url" : ""
+            "repository_name": "",
+            "project_name" : ""
         }
     ]
 }

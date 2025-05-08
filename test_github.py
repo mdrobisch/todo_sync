@@ -4,7 +4,7 @@ from requests import Session
 from sgqlc.endpoint.requests import RequestsEndpoint
 from sgqlc.operation import Operation
 
-from github_schema import (
+from github_client.github_schema import (
     AddProjectV2ItemByIdInput,
     CreateIssueInput,
     Mutation,
@@ -42,8 +42,8 @@ q.__fields__("id")
 q.__fields__("email")
 q.__fields__("name")
 q.__fields__("location")
-r = client.execute(op)
-print(r)
+u = client.execute(op).user
+print()
 pass
 
 
@@ -56,7 +56,7 @@ print(r)
 pass
 
 op = Operation(Mutation)
-input = CreateIssueInput(title="From script", body="From script", repository_id=r.repository.id)
+input = CreateIssueInput(title="From script", body="From script", assignee_ids=[u.id], repository_id=r.repository.id)
 q = op.create_issue(input=input).issue()
 q.__fields__("id")
 
