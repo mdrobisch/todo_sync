@@ -1,5 +1,13 @@
 # todo_sync
 
+A little script to sync caldav todos with github projects.
+Meant to run as a service on a server as a cron-job.
+
+Status:
+  - at the moment only sync. a single repo with caldav 
+  - will sync. in both directions on updates
+  - the config json for multiple repository syncs is not used at the moment
+  - custom properties of project are not fully implemented yet (fetching is there, logic behind not)
 
 ```
 # Get the latest github grapql schema and convert it using introspection
