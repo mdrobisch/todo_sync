@@ -33,7 +33,9 @@ with caldav.DAVClient(
 
 # collect all todos of the calendar and copy them
 github_issues_dict = {}
-github_client = GHClient(user_login = "mdrobisch", access_token = sync_config.get("global_github_token"))
+github_client = GHClient(
+    user_login="mdrobisch", access_token=sync_config.get("global_github_token")
+)
 repo_id, repo_issues = github_client.get_repository_issues("todo")
 
 for i in repo_issues:
@@ -80,10 +82,10 @@ with caldav.DAVClient(
             t.icalendar_component["description"] = sync_dict[
                 "caldav_todos_to_update_dict"
             ][todo_id].body
-            t.icalendar_component["summary"] = sync_dict[
-                "caldav_todos_to_update_dict"
-            ][todo_id].title     
-            t.save()       
+            t.icalendar_component["summary"] = sync_dict["caldav_todos_to_update_dict"][
+                todo_id
+            ].title
+            t.save()
             if issue.closed:  # we need to close the todo
                 t.icalendar_component["status"] = "COMPLETED"
                 if "completed" not in t.icalendar_component:
@@ -109,9 +111,8 @@ for k_i, t in sync_dict["github_issues_to_update_dict"].items():
 
     github_client.update_issue(
         issue_id=issue.id,
-        body=str(
-            t.icalendar_component["description"], title=t.icalendar_component["summary"]
-        ),
+        body=str(t.icalendar_component["description"]),
+        title=t.icalendar_component["summary"],
     )
 
     if not issue.closed:

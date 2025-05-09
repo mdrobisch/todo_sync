@@ -45,7 +45,7 @@ class GHClient():
         self.user_id = u.id
         self.projects = u.projects_v2.nodes
         print()
-        self.get_project("Dashboard")
+        #self.get_project("Dashboard")
         pass
 
     def execute(self, op):
@@ -88,7 +88,6 @@ class GHClient():
         items_query.nodes.field_value_by_name(name="Status")
         #project_item.field_values(first=100)
         r = self.execute(op2).node
-        print(r)
 
 
     def get_repository_issues(self, repository_name : str):

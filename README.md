@@ -10,6 +10,15 @@ Status:
   - the config json for multiple repository syncs is not used at the moment
   - custom properties of project are not fully implemented yet (fetching is there, logic behind not)
 
+# Installing
+
+```
+uv run 
+uv pip install -r pyproject.toml
+```
+
+# Github graphql api
+
 ```
 # Get the latest github grapql schema and convert it using introspection
 uv run python -m sgqlc.introspection --exclude-deprecated --exclude-description -H "Authorization: bearer ${GH_TOKEN}" https://api.github.com/graphql github_schema.json
