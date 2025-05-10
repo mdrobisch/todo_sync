@@ -16,7 +16,7 @@ sync_config: dict
 sync_config = json.load(open("sync_config.json", "r"))
 
 while True:
-    sleep(28)
+    sleep(42)
     try:
         # collect all todos of the calendar and copy them
         caldav_todo_dict = {}
