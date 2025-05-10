@@ -1,11 +1,12 @@
 import json
-import traceback 
+import traceback
 import caldav
 from icalendar import vDatetime
 from sync import match_todos_and_issues
 from copy import deepcopy, copy
 from datetime import datetime, timezone
 from github_client import GHClient
+from time import sleep
 
 # 'https://cloud.fabba.space:443/remote.php/dav/calendars/mdrobisch%40auphoria/personal_shared_by_mdrobisch/2d491c05-2cf6-4518-b580-9b495afdc78e.ics'
 # Access environment variables as if they came from the actual environment
@@ -14,7 +15,8 @@ CALENDAR_URL = "https://cloud.fabba.space/remote.php/dav/calendars/mdrobisch@aup
 sync_config: dict
 sync_config = json.load(open("sync_config.json", "r"))
 
-while(True):
+while True:
+    sleep(58)
     try:
         # collect all todos of the calendar and copy them
         caldav_todo_dict = {}
@@ -30,7 +32,6 @@ while(True):
 
             for t in todos:
                 caldav_todo_dict[str(t.canonical_url).lower()] = copy(t)
-
 
         # collect all todos of the calendar and copy them
         github_issues_dict = {}
@@ -67,7 +68,9 @@ while(True):
                 # create a new github issue and update the todo with its link
                 if todo_id in sync_dict["github_issues_to_create_dict"].keys():
                     r = github_client.create_issue(
-                        repo_id, t.icalendar_component["summary"], actual_todo_description
+                        repo_id,
+                        t.icalendar_component["summary"],
+                        actual_todo_description,
                     )
                     t.icalendar_component["description"] = (
                         f"{r.create_issue.issue.url}\n-\n" + actual_todo_description
@@ -75,7 +78,8 @@ while(True):
                     t.save()
                     github_client.update_issue(
                         issue_id=r.create_issue.issue.id,
-                        body=f"{r.create_issue.issue.url}\n-\n" + actual_todo_description,
+                        body=f"{r.create_issue.issue.url}\n-\n"
+                        + actual_todo_description,
                     )
 
                 if todo_id in sync_dict["caldav_todos_to_update_dict"].keys():
@@ -83,17 +87,21 @@ while(True):
                     t.icalendar_component["description"] = sync_dict[
                         "caldav_todos_to_update_dict"
                     ][todo_id].body
-                    t.icalendar_component["summary"] = sync_dict["caldav_todos_to_update_dict"][
-                        todo_id
-                    ].title
+                    t.icalendar_component["summary"] = sync_dict[
+                        "caldav_todos_to_update_dict"
+                    ][todo_id].title
                     t.save()
                     if issue.closed:  # we need to close the todo
                         t.icalendar_component["status"] = "COMPLETED"
                         if "completed" not in t.icalendar_component:
-                            t.icalendar_component.add("completed", vDatetime(datetime.now()))
+                            t.icalendar_component.add(
+                                "completed", vDatetime(datetime.now())
+                            )
                         else:
                             if t.icalendar_component["completed"] is None:
-                                t.icalendar_component["completed"] = vDatetime(datetime.now())
+                                t.icalendar_component["completed"] = vDatetime(
+                                    datetime.now()
+                                )
                             else:
                                 t.icalendar_component["completed"].dt = datetime.now()
                         t.save()
@@ -105,7 +113,6 @@ while(True):
                             pass
 
                     pass
-
 
         for k_i, t in sync_dict["github_issues_to_update_dict"].items():
             issue = github_issues_dict[k_i]
@@ -130,7 +137,6 @@ while(True):
                     if t.icalendar_component["status"] != "COMPLETED":
                         github_client.reopen_issue(issue.id)
             pass
-
 
         with caldav.DAVClient(
             url=CALENDAR_URL,
