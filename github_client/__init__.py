@@ -10,6 +10,8 @@ from .github_schema import (
     ProjectV2SingleSelectField,
     ProjectV2ItemFieldTextValue,
     ProjectV2IterationField,
+    ProjectV2IterationFieldIteration,
+    ProjectV2ItemFieldIterationValue,
     ProjectV2SingleSelectField,
     ProjectV2ItemFieldSingleSelectValue,
     ProjectV2Field,
@@ -60,7 +62,7 @@ class GHClient():
             raise RuntimeError(errors[0]["message"])
 
 
-    def get_project(self, title):
+    def get_project_extended(self, title):
         project_id = None
         for p in self.projects:
             if p.title == title:
@@ -75,14 +77,16 @@ class GHClient():
         project_query = op2.node(id=project_id).__as__(ProjectV2)
         project_query.__fields__("id", "title")
         fields = project_query.fields(first=100)
-        fields.nodes.__as__(ProjectV2SingleSelectField).__fields__("id", "name", "data_type")
         fields.nodes.__as__(ProjectV2Field).__fields__("id", "name", "data_type")
+        fields.nodes.__as__(ProjectV2IterationField).__fields__("id", "name", "data_type")
+        fields.nodes.__as__(ProjectV2SingleSelectField).__fields__("id", "name", "data_type")
         #fields.nodes.__fields__("name")
         items_query = project_query.items(first=100)  # Adjust the number as needed
         project_item = items_query.nodes.__fields__("id")
         field_value = items_query.nodes.field_values(first=100)
         field_value.nodes.__as__(ProjectV2ItemFieldTextValue).__fields__("text", "field")
         field_value.nodes.__as__(ProjectV2ItemFieldSingleSelectValue).__fields__("name", "field")
+        field_value.nodes.__as__(ProjectV2ItemFieldIterationValue).__fields__("title", "start_date", "duration")
         #field_value.nodes.__fields__("text")
         items_query.nodes.__fields__("content")
         items_query.nodes.field_value_by_name(name="Status")
@@ -90,12 +94,40 @@ class GHClient():
         r = self.execute(op2).node
 
 
+    def get_project(self, project_name):
+        project_id = None
+        for p in self.projects:
+            if p.title == project_name:
+                project_id = p.id
+        if not project_id:
+            raise Exception(f"No project '{project_name}' found in the users project list")
+        # We can query the project by the number like
+        #     op2 = Operation(Query)
+        #     project_query = op2.user(login=user_login).project_v2(number=number)
+        # but we will use the query by id here
+        op2 = Operation(Query)
+        project_query = op2.node(id=project_id).__as__(ProjectV2)
+        project_query.__fields__("id", "title")
+        items_query = project_query.items(first=100)  # Adjust the number as needed
+        items_query.nodes.__fields__("id")
+        items_query.nodes.__fields__("updated_at")
+
+        field_value = items_query.nodes.field_values(first=100)
+        field_value.nodes.__as__(ProjectV2ItemFieldTextValue).__fields__("text", "field")
+        field_value.nodes.__as__(ProjectV2ItemFieldSingleSelectValue).__fields__("name", "field")
+        field_value.nodes.__as__(ProjectV2ItemFieldIterationValue).__fields__("title", "start_date", "duration", "field")
+        #field_value.nodes.__fields__("text")
+        items_query.nodes.__fields__("content")
+        #project_item.field_values(first=100)
+        r = self.execute(op2).node
+        return r.id, r.items.nodes
+
     def get_repository_issues(self, repository_name : str):
         repo_token = repository_name.strip().split("/")
         if len(repo_token) == 1:
             owner = self.user_login
         if len(repo_token) == 2:
-            owner = self.user_login
+            owner = repo_token[0]
             repository_name = repo_token[1]
         if len(repo_token) > 2:
             raise Exception("Invalid repository name. Expect either 'org/name' or 'name' (for user repositories)")
