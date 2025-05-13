@@ -28,7 +28,7 @@ def check_and_delete_inactive_todo(caldav_todo):
 
 
 while True:
-    # sleep(42)
+    sleep(42)
     try:
         CALENDAR_USER_BASE_URL = (
             "https://cloud.fabba.space/remote.php/dav/calendars/mdrobisch@auphoria/"
