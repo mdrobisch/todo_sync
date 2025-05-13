@@ -28,7 +28,6 @@ def check_and_delete_inactive_todo(caldav_todo):
 
 
 while True:
-    sleep(42)
     try:
         CALENDAR_USER_BASE_URL = (
             "https://cloud.fabba.space/remote.php/dav/calendars/mdrobisch@auphoria/"
@@ -223,3 +222,5 @@ while True:
     except Exception as e:
         print(e)
         traceback.print_exc()
+    sleep(42)
+
