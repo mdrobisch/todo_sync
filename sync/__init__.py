@@ -1,6 +1,8 @@
+import logging
 from urllib.parse import urlparse
 from datetime import timedelta
 
+logger = logging.getLogger()
 
 def get_updates_required(
     github_issue,
@@ -148,7 +150,7 @@ def match_todos_and_issues(
     exclude_closed=False,
     exclude_backlog=False,
     exclude_active=False,
-):
+):    
     github_issues_to_create_dict = {}
     github_issues_to_update_dict = {}
     caldav_todos_to_create_dict = {}
@@ -175,20 +177,20 @@ def match_todos_and_issues(
             and t.vobject_instance.vtodo.completed.value
         ):
             continue
-        print(f"{summary} issue needs to be added")
+        logger.info(f"{summary} issue needs to be added")
         github_issues_to_create_dict[k_t] = t
 
     # check for caldav todos to add
     for k_i, i in github_issues_dict.items():
         if i.project_status.lower() not in ["done", "canceled"]:
             if i.closed:
-                print(f"{i.title} issue needs to be reopened")
+                logger.info(f"{i.title} issue needs to be reopened")
                 github_issues_to_update_dict[k_i] = {"reopen": True}
         if k_i in referenced_issues_list:
             continue
         if exclude_closed and i.closed:
             continue
-        print(f"{i.title} todo needs to be added")
+        logger.info(f"{i.title} todo needs to be added")
         caldav_todos_to_create_dict[k_i] = i
 
     # check for updates needed
@@ -198,11 +200,11 @@ def match_todos_and_issues(
             i, t, exclude_closed, exclude_backlog, exclude_active
         )
         if todo_updates:
-            print(f"{summary} todo needs to be updated {list(todo_updates.keys())}")
+            logger.info(f"{summary} todo needs to be updated {list(todo_updates.keys())}")
             caldav_todos_to_update_dict[k_t] = todo_updates
         else:
             if issue_updates:
-                print(
+                logger.info(
                     f"{summary} issue needs to be updated {list(issue_updates.keys())}"
                 )
                 github_issues_to_update_dict[k_i] = issue_updates

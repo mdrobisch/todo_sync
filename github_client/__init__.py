@@ -1,3 +1,4 @@
+import logging
 from datetime import datetime
 from requests import Session
 from sgqlc.endpoint.requests import RequestsEndpoint
@@ -19,6 +20,8 @@ from .github_schema import (
     Mutation,
     Query)
 
+logger = logging.getLogger()
+
 class NoUpdate():
     pass
 
@@ -34,10 +37,10 @@ class GHClient():
 
         op = Operation(Query)
         if user_login:
-            print("Use Github client with user login")
+            logger.info("Use Github client with user login")
             q = op.user(login=user_login)
         else:
-            print("Use Github client with organization login")
+            logger.info("Use Github client with organization login")
             q = op.organization(login=org_login)
 
         q.__fields__("id")
@@ -46,7 +49,6 @@ class GHClient():
         u = self.execute(op).user
         self.user_id = u.id
         self.projects = u.projects_v2.nodes
-        print()
         #self.get_project("Dashboard")
         pass
 
@@ -58,7 +60,7 @@ class GHClient():
         if not errors:
             return (op + cont)
         else:
-            print(errors)
+            logger.error(errors)
             raise RuntimeError(errors[0]["message"])
 
 

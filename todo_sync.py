@@ -1,5 +1,5 @@
 import json
-import traceback
+import logging
 import caldav
 from icalendar import vDatetime, vDDDTypes
 from sync import match_todos_and_issues, merge_issues_and_project_items
@@ -7,6 +7,21 @@ from copy import deepcopy, copy
 from datetime import datetime, timezone, timedelta
 from github_client import GHClient
 from time import sleep
+from logging.handlers import RotatingFileHandler
+
+# logging
+logging.basicConfig(
+    handlers=[
+        logging.handlers.RotatingFileHandler(
+            "logs/logs.log", maxBytes=100000, backupCount=10
+        ),
+        logging.StreamHandler(),
+    ],
+    level=logging.INFO,
+    format="[%(asctime)s] [%(name)s] %(levelname)s : %(message)s",
+    datefmt="%Y-%m-%dT%H:%M:%S",
+)
+logger = logging.getLogger()
 
 # 'https://cloud.fabba.space:443/remote.php/dav/calendars/mdrobisch%40auphoria/personal_shared_by_mdrobisch/2d491c05-2cf6-4518-b580-9b495afdc78e.ics'
 # Access environment variables as if they came from the actual environment
@@ -69,7 +84,7 @@ while True:
             caldav_todo_dict,
             github_issues_dict,
             exclude_closed=True,
-            exclude_backlog=True
+            exclude_backlog=True,
         )
 
         with caldav.DAVClient(
@@ -218,9 +233,6 @@ while True:
                 github_client.update_issue(issue_id=i.id, body=str(description))
 
                 pass
-        print()
     except Exception as e:
-        print(e)
-        traceback.print_exc()
+        logger.exception(e)
     sleep(42)
-
